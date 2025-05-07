@@ -1,0 +1,29 @@
+from dataSet import*
+def hCost(path):
+    last_node=path[-1][0]
+    return heuristics[last_node]
+def a_star(start,goal):
+    pqueue=[[(start,0)]]
+    visited={}
+    while pqueue:
+        pqueue.sort(key=hCost)
+        path=pqueue.pop(0)
+        node=path[-1][0]
+        cost=hCost(path)
+
+        if node in visited and visited[node] <= cost:
+            continue
+        visited[node] = cost
+
+        if node == goal:
+            return path
+        
+        for (neighbor , edgecost) in graph.get(node,[]):
+            new_path = path.copy()
+            new_path.append((neighbor , edgecost))
+            pqueue.append(new_path)
+    return None
+
+[sol]=a_star('A','G')
+# fcost = hCost(sol)
+print(f"path is {sol}")
