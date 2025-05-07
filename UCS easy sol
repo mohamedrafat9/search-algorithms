@@ -1,0 +1,32 @@
+from dataSet import graph
+
+def path_cost(path):
+    return sum(cost for _, cost in path)
+
+def ucs(start, goal):
+    queue = [[(start, 0)]]  
+    visited = {}
+
+    while queue:
+        queue.sort(key=path_cost)
+        path = queue.pop(0)
+        node = path[-1][0]
+        cost = path_cost(path)
+
+        if node in visited and visited[node] <= cost:
+            continue
+        visited[node] = cost
+
+        if node == goal:
+            return path
+
+        for (neighbor, edgecost) in graph.get(node, []):
+            new_path = path.copy()
+            new_path.append((neighbor, edgecost))
+            queue.append(new_path)
+
+    return None
+
+sol=ucs('A','G')
+fcost =path_cost(sol)
+print(f"path is {sol} and its cost is {fcost}")
