@@ -1,33 +1,56 @@
 tree_data = {
-    'A':[('B'),('C')],
-    'B':[('D'),('E')],
-    'C':[('E')],
-    'D':[('F')],
-    'E':[('F')],
-    'F':[('G')],
-    'G':[]
+    'A': [('B', 2), ('C', 1)],
+    'B': [('D', 3), ('E', 1)],
+    'C': [('E', 4)],
+    'D': [('F', 5)],
+    'E': [('F', 2)],
+    'F': [('G', 1)],
+    'G': []
+} # if the question was with no cost edges and he ask for greedy you will need to fit  the whole code with this 
+# and its not a big problem , the lines down with mark ($) you will need to modify it 
+heuristics = {
+    'A': 7, 
+    'B': 6, 
+    'C': 4, 
+    'D': 5,
+    'E': 3, 
+    'F': 2, 
+    'G': 0
 }
-def bfs (start,goal):
-    queue=[[start]] # [['A']]
-    vistited=set()
+def totalCost(path): # just for reporting , will not effect in anything in greedy if the cost edges exists
+    tot=0
+    for i in path:
+        tot+=i[1]
+    return tot
+    
+def hu(path):
+    lastnode=path[-1]
+    return heuristics[lastnode]
 
-    while queue : 
-        path=queue.pop(0) #['A']
-        node=path[-1] # 'A'
+def greedy(start,goal):
+    pqueue=[[(start,0)]] # $ 
+    visited=set() # we don't need to store the cost here , its optional if u want , thus i replaced the dic to set 
 
-        if node == goal:
+
+    while pqueue:
+        pqueue.sort(key=hu)
+        path=pqueue.pop(0) 
+        node=path[-1][0] #$
+        
+
+        if node in visited:
+            continue
+        visited.add(node)
+
+        if node == goal :
             return path
         
-        if node in vistited :
-            continue
-        vistited.add(node)
+        for (next_node) in tree_data.get(node,[]):# also here i removed the cost things 
+            new_path=path.copy()
+            new_path.append(next_node)
+            pqueue.append(new_path)
 
-        for next_node in tree_data.get(node,[]):
-            new_path=path.copy()# ['A']
-            new_path.append(next_node)# ['A','C']
-            queue.append(new_path)# [['A','B'],['A','C']]
-        
     return None
-
-sol = bfs('A','G')
-print(f"the path of bfs is {sol}")
+sol=greedy('A','G')
+pcost=totalCost(sol) # just reportingggggg 
+print(f"the path is {sol} and its cost is {pcost}")
